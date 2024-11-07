@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+    postgres:
+        container_name: container-postgres-user-service
+        image: postgres
+        hostname: localhost
+        ports:
+            - "5434:5434"
+        environment:
+            POSTGRES_USER: admin
+            POSTGRES_PASSWORD: root
+            POSTGRES_DB: library-mgmt-user-service
+        volumes:
+          - postgres-data:/var/lib/postgresql/data
+        restart: unless-stopped
+
+volumes:
+  postgres-data:

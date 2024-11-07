@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userservice-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userservice
+  template:
+    metadata:
+      labels:
+        app: userservice
+    spec:
+      volumes:
+        - name: userservice-config-volume
+          configMap:
+            name: userservice-config
+            defaultMode: 420
+      containers:
+        - name: userservice
+          image: userservice:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: JAVA_ARGS
+              value: "--spring.config.location=/app/config/application.properties"
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - mountPath: "/app/config"
+              name: userservice-config-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: userservice-service
+spec:
+  selector:
+    app: userservice
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8080
